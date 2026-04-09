@@ -12,15 +12,10 @@ async function init() {
     const modelURL = URL + "model.json";
     const metadataURL = URL + "metadata.json";
 
-    // load the model and metadata
     try {
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
-
         labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < maxPredictions; i++) { // and class labels
-            labelContainer.appendChild(document.createElement("div"));
-        }
 
         uploadButton.disabled = false;
         uploadButton.textContent = 'Upload Image';
@@ -32,14 +27,26 @@ async function init() {
     }
 }
 
-// run the webcam image through the image model
 async function predict(image) {
-    // predict can take in an image, video or canvas html element
     const prediction = await model.predict(image);
+    // Clear previous results
+    labelContainer.innerHTML = "";
+
     for (let i = 0; i < maxPredictions; i++) {
-        const classPrediction =
-            prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-        labelContainer.childNodes[i].innerHTML = classPrediction;
+        const resultContainer = document.createElement("div");
+        resultContainer.classList.add("prediction-result");
+
+        const className = prediction[i].className;
+        const probability = prediction[i].probability;
+
+        resultContainer.innerHTML = `
+            <span class="class-name">${className}</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${probability * 100}%"></div>
+            </div>
+            <span class="probability">${(probability * 100).toFixed(1)}%</span>
+        `;
+        labelContainer.appendChild(resultContainer);
     }
 }
 
@@ -47,16 +54,18 @@ uploadButton.addEventListener('click', () => imageUpload.click());
 
 imageUpload.addEventListener('change', async (event) => {
     if (event.target.files && event.target.files[0]) {
+        labelContainer.innerHTML = ""; // Clear old results immediately
+        loader.style.display = 'block'; // Show loader while predicting
         const reader = new FileReader();
         reader.onload = async (e) => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
             await predict(imagePreview);
+            loader.style.display = 'none'; // Hide loader after predicting
         };
         reader.readAsDataURL(event.target.files[0]);
     }
 });
-
 
 const themeToggle = document.getElementById('checkbox');
 const body = document.body;
@@ -69,5 +78,4 @@ themeToggle.addEventListener('change', () => {
     }
 });
 
-// Initialize the application
 init();
