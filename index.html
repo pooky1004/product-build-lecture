@@ -10,7 +10,8 @@
     <div class="container">
         <h1>Which one are you, a cat or a dog?</h1>
         <p>Upload a picture to find out!</p>
-        <button type="button" id="upload-button">Upload Image</button>
+        <div id="loader" class="loader"></div>
+        <button type="button" id="upload-button" disabled>Loading Model...</button>
         <input type="file" id="image-upload" accept="image/*" style="display: none;">
         <img id="image-preview" src="#" alt="Your Image" style="display: none; max-width: 400px; margin-top: 1rem;"/>
         <div id="label-container"></div>

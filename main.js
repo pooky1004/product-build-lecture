@@ -5,18 +5,30 @@ let model, labelContainer, maxPredictions;
 const uploadButton = document.getElementById('upload-button');
 const imageUpload = document.getElementById('image-upload');
 const imagePreview = document.getElementById('image-preview');
+const loader = document.getElementById('loader');
 
-async function loadModel() {
+async function init() {
+    loader.style.display = 'block';
     const modelURL = URL + "model.json";
     const metadataURL = URL + "metadata.json";
 
     // load the model and metadata
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
+    try {
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
 
-    labelContainer = document.getElementById("label-container");
-    for (let i = 0; i < maxPredictions; i++) { // and class labels
-        labelContainer.appendChild(document.createElement("div"));
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) { // and class labels
+            labelContainer.appendChild(document.createElement("div"));
+        }
+
+        uploadButton.disabled = false;
+        uploadButton.textContent = 'Upload Image';
+    } catch (error) {
+        console.error("Error loading model:", error);
+        uploadButton.textContent = 'Error loading model';
+    } finally {
+        loader.style.display = 'none';
     }
 }
 
@@ -39,9 +51,6 @@ imageUpload.addEventListener('change', async (event) => {
         reader.onload = async (e) => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-            if (!model) {
-                await loadModel();
-            }
             await predict(imagePreview);
         };
         reader.readAsDataURL(event.target.files[0]);
@@ -59,3 +68,6 @@ themeToggle.addEventListener('change', () => {
         body.classList.remove('dark-mode');
     }
 });
+
+// Initialize the application
+init();
