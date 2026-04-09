@@ -1,6 +1,9 @@
 const generateBtn = document.getElementById('generate');
 const numbersDiv = document.querySelector('.numbers');
 const themeSwitch = document.getElementById('checkbox');
+const contactBtn = document.getElementById('contact-btn');
+const contactFormContainer = document.getElementById('contact-form-container');
+const closeBtn = document.querySelector('.close-btn');
 
 const currentTheme = localStorage.getItem('theme');
 
@@ -27,6 +30,20 @@ themeSwitch.addEventListener('change', switchTheme, false);
 generateBtn.addEventListener('click', () => {
     const numbers = generateNumbers();
     displayNumbers(numbers);
+});
+
+contactBtn.addEventListener('click', () => {
+    contactFormContainer.classList.remove('hidden');
+});
+
+closeBtn.addEventListener('click', () => {
+    contactFormContainer.classList.add('hidden');
+});
+
+contactFormContainer.addEventListener('click', (e) => {
+    if (e.target === contactFormContainer) {
+        contactFormContainer.classList.add('hidden');
+    }
 });
 
 function generateNumbers() {
