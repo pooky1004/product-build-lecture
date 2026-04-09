@@ -29,7 +29,6 @@ async function init() {
 
 async function predict(image) {
     const prediction = await model.predict(image);
-    // Clear previous results
     labelContainer.innerHTML = "";
 
     for (let i = 0; i < maxPredictions; i++) {
@@ -52,16 +51,21 @@ async function predict(image) {
 
 uploadButton.addEventListener('click', () => imageUpload.click());
 
-imageUpload.addEventListener('change', async (event) => {
+imageUpload.addEventListener('change', (event) => {
     if (event.target.files && event.target.files[0]) {
-        labelContainer.innerHTML = ""; // Clear old results immediately
-        loader.style.display = 'block'; // Show loader while predicting
+        labelContainer.innerHTML = "";
+        loader.style.display = 'block';
         const reader = new FileReader();
-        reader.onload = async (e) => {
+        reader.onload = (e) => {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block';
-            await predict(imagePreview);
-            loader.style.display = 'none'; // Hide loader after predicting
+
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = async () => {
+                await predict(img);
+                loader.style.display = 'none';
+            };
         };
         reader.readAsDataURL(event.target.files[0]);
     }
