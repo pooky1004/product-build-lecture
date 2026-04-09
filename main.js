@@ -1,66 +1,49 @@
-const generateBtn = document.getElementById('generate');
-const numbersDiv = document.querySelector('.numbers');
-const themeSwitch = document.getElementById('checkbox');
-const contactBtn = document.getElementById('contact-btn');
-const contactFormContainer = document.getElementById('contact-form-container');
-const closeBtn = document.querySelector('.close-btn');
+const URL = "https://teachablemachine.withgoogle.com/models/J78gMY2UR/";
 
-const currentTheme = localStorage.getItem('theme');
+let model, webcam, labelContainer, maxPredictions;
 
-if (currentTheme) {
-    document.body.setAttribute('data-theme', currentTheme);
+async function init() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
 
-    if (currentTheme === 'dark') {
-        themeSwitch.checked = true;
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+
+    const flip = true;
+    webcam = new tmImage.Webcam(200, 200, flip);
+    await webcam.setup();
+    await webcam.play();
+    window.requestAnimationFrame(loop);
+
+    document.getElementById("webcam-container").appendChild(webcam.canvas);
+    labelContainer = document.getElementById("label-container");
+    for (let i = 0; i < maxPredictions; i++) {
+        labelContainer.appendChild(document.createElement("div"));
     }
 }
 
-function switchTheme(e) {
-    if (e.target.checked) {
-        document.body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
+async function loop() {
+    webcam.update();
+    await predict();
+    window.requestAnimationFrame(loop);
+}
+
+async function predict() {
+    const prediction = await model.predict(webcam.canvas);
+    for (let i = 0; i < maxPredictions; i++) {
+        const classPrediction =
+            prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+        labelContainer.childNodes[i].innerHTML = classPrediction;
+    }
+}
+
+const themeToggle = document.getElementById('checkbox');
+const body = document.body;
+
+themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+        body.classList.add('dark-mode');
     } else {
-        document.body.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
-    }
-}
-
-themeSwitch.addEventListener('change', switchTheme, false);
-
-generateBtn.addEventListener('click', () => {
-    const numbers = generateNumbers();
-    displayNumbers(numbers);
-});
-
-contactBtn.addEventListener('click', () => {
-    contactFormContainer.classList.remove('hidden');
-});
-
-closeBtn.addEventListener('click', () => {
-    contactFormContainer.classList.add('hidden');
-});
-
-contactFormContainer.addEventListener('click', (e) => {
-    if (e.target === contactFormContainer) {
-        contactFormContainer.classList.add('hidden');
+        body.classList.remove('dark-mode');
     }
 });
-
-function generateNumbers() {
-    const numbers = new Set();
-    while (numbers.size < 6) {
-        const randomNumber = Math.floor(Math.random() * 45) + 1;
-        numbers.add(randomNumber);
-    }
-    return Array.from(numbers).sort((a, b) => a - b);
-}
-
-function displayNumbers(numbers) {
-    numbersDiv.innerHTML = '';
-    for (const number of numbers) {
-        const numberDiv = document.createElement('div');
-        numberDiv.classList.add('number');
-        numberDiv.textContent = number;
-        numbersDiv.appendChild(numberDiv);
-    }
-}

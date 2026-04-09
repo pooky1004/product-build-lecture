@@ -3,35 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
+    <title>Animal Face Test</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Lotto Number Generator</h1>
-        <div class="numbers"></div>
-        <button id="generate">Generate Numbers</button>
-    </div>
-
-    <button id="contact-btn">Partnership Inquiry</button>
-
-    <div id="contact-form-container" class="hidden">
-        <div class="form-content">
-            <span class="close-btn">&times;</span>
-            <h2>Partnership Inquiry</h2>
-            <form action="https://formspree.io/f/mykbawoq" method="POST">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="message">Message</label>
-                <textarea id="message" name="message" required></textarea>
-
-                <button type="submit">Send</button>
-            </form>
-        </div>
+        <h1>Which one are you, a cat or a dog?</h1>
+        <div>Teachable Machine Image Model</div>
+        <button type="button" onclick="init()">Start</button>
+        <div id="webcam-container"></div>
+        <div id="label-container"></div>
     </div>
 
     <div class="theme-switch-wrapper">
@@ -41,26 +22,8 @@
         </label>
     </div>
 
-    <div id="disqus_thread"></div>
-    <script>
-        /**
-        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-        /*
-        var disqus_config = function () {
-        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-        };
-        */
-        (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://productbuilder-x7vvalk3ay.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
